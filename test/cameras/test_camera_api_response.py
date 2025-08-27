@@ -1,7 +1,7 @@
 import unittest
 from datetime import datetime
 
-from spypointapi.cameras.camera import Coordinates
+from spypointapi.cameras.camera import Coordinates, TransmitTime
 from spypointapi.cameras.camera_api_response import CameraApiResponse
 
 
@@ -9,10 +9,26 @@ class TestCameraApiResponse(unittest.TestCase):
 
     def test_parses_json(self):
         camera = CameraApiResponse.camera_from_json(
-            {
-                "id": "id",
-                "config": {
+                {
+                    "id": "id",
+                    "config": {
                     "name": "name",
+                    "captureMode": "timeLapse",
+                    "delay": 30,
+                    "multiShot": 5,
+                    "quality": "high",
+                    "operationMode": "day",
+                    "sensibility": {
+                        "level": "medium",
+                    },
+                    "transmitAuto": True,
+                    "transmitFormat": "full",
+                    "transmitFreq": 0,
+                    "transmitTime": {
+                        "hour": 6,
+                        "minute": 0,
+                    },
+                    "triggerSpeed": "optimal",
                 },
                 "status": {
                     "model": "model",
@@ -38,6 +54,11 @@ class TestCameraApiResponse(unittest.TestCase):
                         "missing_sd_card"
                     ]
                 },
+                "activationDate": "2024-09-30T01:02:03.456Z",
+                "creationDate": "2024-09-20T10:00:00.000Z",
+                "hdSince": "2024-10-01T00:00:00.000Z",
+                "ucid": "UCID123456",
+                "isCellular": True,
             })
 
         self.assertEqual(camera.id, "id")
@@ -53,6 +74,20 @@ class TestCameraApiResponse(unittest.TestCase):
         self.assertEqual(camera.battery_type, "12V")
         self.assertEqual(camera.memory, 10)
         self.assertEqual(camera.notifications, ["missing_sd_card"])
+        self.assertEqual(camera.activation_date, datetime(2024, 9, 30, 1, 2, 3, 456000, current_timezone))
+        self.assertEqual(camera.creation_date, datetime(2024, 9, 20, 10, 0, 0, 0, current_timezone))
+        self.assertEqual(camera.is_cellular, True)
+        self.assertEqual(camera.capture_mode, "timeLapse")
+        self.assertEqual(camera.delay, 30)
+        self.assertEqual(camera.multi_shot, 5)
+        self.assertEqual(camera.quality, "high")
+        self.assertEqual(camera.operation_mode, "day")
+        self.assertEqual(camera.sensibility, "medium")
+        self.assertEqual(camera.transmit_auto, True)
+        self.assertEqual(camera.transmit_format, "full")
+        self.assertEqual(camera.transmit_freq, 0)
+        self.assertEqual(camera.transmit_time, TransmitTime(hour=6, minute=0))
+        self.assertEqual(camera.trigger_speed, "optimal")
 
     def test_parses_missing_fields(self):
         camera = CameraApiResponse.camera_from_json(
@@ -74,6 +109,20 @@ class TestCameraApiResponse(unittest.TestCase):
         self.assertEqual(camera.memory, None)
         self.assertEqual(camera.modem_firmware, '')
         self.assertEqual(camera.camera_firmware, '')
+        self.assertEqual(camera.activation_date, None)
+        self.assertEqual(camera.creation_date, None)
+        self.assertEqual(camera.is_cellular, None)
+        self.assertEqual(camera.capture_mode, None)
+        self.assertEqual(camera.delay, None)
+        self.assertEqual(camera.multi_shot, None)
+        self.assertEqual(camera.quality, None)
+        self.assertEqual(camera.operation_mode, None)
+        self.assertEqual(camera.sensibility, None)
+        self.assertEqual(camera.transmit_auto, None)
+        self.assertEqual(camera.transmit_format, None)
+        self.assertEqual(camera.transmit_freq, None)
+        self.assertEqual(camera.transmit_time, None)
+        self.assertEqual(camera.trigger_speed, None)
 
     def test_parses_missing_memory_size(self):
         camera = CameraApiResponse.camera_from_json(

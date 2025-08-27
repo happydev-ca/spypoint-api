@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Dict, Any, List
 
 from .. import Camera
-from .camera import Coordinates
+from .camera import Coordinates, TransmitTime
 
 
 class CameraApiResponse:
@@ -30,6 +30,20 @@ class CameraApiResponse:
             notifications=CameraApiResponse.notifications_from_json(status.get('notifications', None)),
             owner=CameraApiResponse.owner_from_json(data),
             coordinates=CameraApiResponse.coordinates_from_json(status.get('coordinates', None)),
+            activation_date=CameraApiResponse.datetime_from_json(data.get('activationDate')),
+            creation_date=CameraApiResponse.datetime_from_json(data.get('creationDate')),
+            is_cellular=data.get('isCellular', data.get('cellular', None)),
+            capture_mode=config.get('captureMode', None),
+            delay=config.get('delay', None),
+            multi_shot=config.get('multiShot', None),
+            quality=config.get('quality', None),
+            operation_mode=config.get('operationMode', None),
+            sensibility=config.get('sensibility', {}).get('level', None),
+            transmit_auto=config.get('transmitAuto', None),
+            transmit_format=config.get('transmitFormat', None),
+            transmit_freq=config.get('transmitFreq', None),
+            transmit_time=CameraApiResponse.transmit_time_from_json(config.get('transmitTime', None)),
+            trigger_speed=config.get('triggerSpeed', None),
         )
 
     @classmethod
@@ -56,6 +70,12 @@ class CameraApiResponse:
         return round(memory.get('used') / memory.get('size') * 100, 2)
 
     @classmethod
+    def transmit_time_from_json(cls, transmit_time: Dict[str, Any] | None) -> TransmitTime | None:
+        if not transmit_time or None in (transmit_time.get('hour'), transmit_time.get('minute')):
+            return None
+        return TransmitTime(hour=transmit_time['hour'], minute=transmit_time['minute'])
+
+    @classmethod
     def notifications_from_json(cls, notifications: Dict[str, Any] | None) -> List[str] | None:
         if notifications is None:
             return None
@@ -77,3 +97,10 @@ class CameraApiResponse:
             return None
         lat_lon = coordinates[0]['position']['coordinates']
         return Coordinates(latitude=lat_lon[1], longitude=lat_lon[0])
+
+    @classmethod
+    def datetime_from_json(cls, date_str: str | None) -> datetime | None:
+        if not date_str:
+            return None
+        current_timezone = datetime.now().astimezone().tzinfo
+        return datetime.fromisoformat(date_str.rstrip('Z')).replace(tzinfo=current_timezone)
