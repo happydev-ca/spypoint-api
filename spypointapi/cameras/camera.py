@@ -49,6 +49,10 @@ class Camera:
     transmit_freq: int | None = None
     transmit_time: TransmitTime | None = None
     trigger_speed: str | None = None
+    photo_count: int | None = None
+    hd_photo_count: int | None = None
+    photo_limit: int | None = None
+    hd_photo_limit: int | None = None
 
     @property
     def is_online(self) -> bool:
@@ -70,5 +74,7 @@ class Camera:
             f"operation_mode={self.operation_mode}, sensibility={self.sensibility}, "
             f"transmit_auto={self.transmit_auto}, transmit_format={self.transmit_format}, "
             f"transmit_freq={self.transmit_freq}, transmit_time={self.transmit_time}, "
-            f"trigger_speed={self.trigger_speed})"
+            f"trigger_speed={self.trigger_speed}), "
+            f"photo_count={self.photo_count}, hd_photo_count={self.hd_photo_count}, "
+            f"photo_limit={self.photo_limit}, hd_photo_limit={self.hd_photo_limit})"
         )
