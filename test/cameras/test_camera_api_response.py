@@ -295,3 +295,51 @@ class TestCameraApiResponse(unittest.TestCase):
         )
 
         self.assertEqual(camera.coordinates, None)
+
+    def test_parses_subscriptions_to_get_photo_counts_and_limits(self):
+        camera = CameraApiResponse.camera_from_json(
+            {
+                "id": "id",
+                "config": {
+                    "name": "name",
+                },
+                "status": {
+                    "model": "model",
+                    "lastUpdate": "2024-10-30T02:03:48.716Z",
+                },
+                "subscriptions": [
+                    {
+                        "photoCount": 4,
+                        "photoLimit": 250,
+                        "hdPhotoCount": 0,
+                        "hdPhotoLimit": 100,
+                    },
+                ]
+            }
+        )
+
+        self.assertEqual(camera.photo_count, 4)
+        self.assertEqual(camera.photo_limit, 250)
+        self.assertEqual(camera.hd_photo_count, 0)
+        self.assertEqual(camera.hd_photo_limit, 100)
+
+    def test_parses_subscriptions_to_maybe_get_photo_counts_and_limits(self):
+        camera = CameraApiResponse.camera_from_json(
+            {
+                "id": "id",
+                "config": {
+                    "name": "name",
+                },
+                "status": {
+                    "model": "model",
+                    "lastUpdate": "2024-10-30T02:03:48.716Z",
+                },
+                "subscriptions": [{}]
+            }
+        )
+
+        self.assertEqual(camera.photo_count, None)
+        self.assertEqual(camera.photo_limit, None)
+        self.assertEqual(camera.hd_photo_count, None)
+        self.assertEqual(camera.hd_photo_limit, None)
+

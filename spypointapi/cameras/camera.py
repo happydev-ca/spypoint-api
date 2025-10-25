@@ -50,8 +50,8 @@ class Camera:
     transmit_time: TransmitTime | None = None
     trigger_speed: str | None = None
     photo_count: int | None = None
-    hd_photo_count: int | None = None
     photo_limit: int | None = None
+    hd_photo_count: int | None = None
     hd_photo_limit: int | None = None
 
     @property
@@ -75,6 +75,6 @@ class Camera:
             f"transmit_auto={self.transmit_auto}, transmit_format={self.transmit_format}, "
             f"transmit_freq={self.transmit_freq}, transmit_time={self.transmit_time}, "
             f"trigger_speed={self.trigger_speed}), "
-            f"photo_count={self.photo_count}, hd_photo_count={self.hd_photo_count}, "
-            f"photo_limit={self.photo_limit}, hd_photo_limit={self.hd_photo_limit})"
+            f"photo_count={self.photo_count}, photo_limit={self.photo_limit}, "
+            f"hd_photo_count={self.hd_photo_count}, hd_photo_limit={self.hd_photo_limit})"
         )

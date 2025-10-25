@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Dict, Any, List
 
+from .subscription_api_response import SubscriptionApiResponse
 from .. import Camera
 from .camera import Coordinates, TransmitTime
 
@@ -15,7 +16,7 @@ class CameraApiResponse:
     def camera_from_json(cls, data: Dict[str, Any]) -> Camera:
         config = data.get('config', {})
         status = data.get('status', {})
-        subscriptions = data.get('subscriptions', [])
+        subscription = SubscriptionApiResponse.subscription_from_json(data.get('subscriptions'))
         return Camera(
             id=data['id'],
             name=config['name'],
@@ -45,10 +46,10 @@ class CameraApiResponse:
             transmit_freq=config.get('transmitFreq', None),
             transmit_time=CameraApiResponse.transmit_time_from_json(config.get('transmitTime', None)),
             trigger_speed=config.get('triggerSpeed', None),
-            photo_count=CameraApiResponse.subscription_counters_from_json(subscriptions).get('photoCount'),
-            hd_photo_count=CameraApiResponse.subscription_counters_from_json(subscriptions).get('hdPhotoCount'),
-            photo_limit=CameraApiResponse.subscription_counters_from_json(subscriptions).get('photoLimit'),
-            hd_photo_limit=CameraApiResponse.subscription_counters_from_json(subscriptions).get('hdPhotoLimit'),            
+            photo_count=subscription.photoCount,
+            photo_limit=subscription.photoLimit,
+            hd_photo_count=subscription.hdPhotoCount,
+            hd_photo_limit=subscription.hdPhotoLimit,
         )
 
     @classmethod
@@ -109,13 +110,3 @@ class CameraApiResponse:
             return None
         current_timezone = datetime.now().astimezone().tzinfo
         return datetime.fromisoformat(date_str.rstrip('Z')).replace(tzinfo=current_timezone)
-
-    @classmethod
-    def subscription_counters_from_json(cls, subs: list[dict[str, Any]] | None) -> dict[str, int | None]:
-        sub = subs[0] if subs else {}
-        return {
-            "photoCount": sub.get("photoCount"),
-            "hdPhotoCount": sub.get("hdPhotoCount"),
-            "photoLimit": sub.get("photoLimit"),
-            "hdPhotoLimit": sub.get("hdPhotoLimit"),
-        }
