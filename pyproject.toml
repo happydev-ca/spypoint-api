@@ -1,6 +1,6 @@
 [project]
 name = "spypoint-api"
-version = "0.3.0"
+version = "0.4.0"
 description = "Library to communicate with Spypoint REST api"
 authors = [{ name = "Francois Perron", email = "fperron@gmail.com" }]
 readme = "README.md"
