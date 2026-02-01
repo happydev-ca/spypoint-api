@@ -23,7 +23,7 @@ class CameraApiResponse:
             model=status['model'],
             modem_firmware=status.get('modemFirmware', ''),
             camera_firmware=status.get('version', ''),
-            last_update_time=datetime.fromisoformat(status['lastUpdate'][:-1]).replace(tzinfo=datetime.now().astimezone().tzinfo),
+            last_update_time=CameraApiResponse.last_update_time_from_json(status),
             signal=status.get('signal', {}).get('processed', {}).get('percentage', None),
             temperature=CameraApiResponse.temperature_from_json(status.get('temperature', None)),
             battery=CameraApiResponse.battery_from_json(status.get('batteries', None)),
@@ -51,6 +51,13 @@ class CameraApiResponse:
             hd_photo_count=subscription.hdPhotoCount,
             hd_photo_limit=subscription.hdPhotoLimit,
         )
+
+    @classmethod
+    def last_update_time_from_json(cls, status) -> datetime | None:
+        if status.get('lastUpdate') is None:
+            return None
+
+        return datetime.fromisoformat(status['lastUpdate'][:-1]).replace(tzinfo=datetime.now().astimezone().tzinfo)
 
     @classmethod
     def temperature_from_json(cls, temperature: Dict[str, Any] | None) -> int | None:

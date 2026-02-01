@@ -26,7 +26,7 @@ class Camera:
     model: str
     modem_firmware: str
     camera_firmware: str
-    last_update_time: datetime
+    last_update_time: datetime | None = None
     signal: Percentage | None = None
     temperature: Celsius | None = None
     battery: Percentage | None = None
@@ -56,6 +56,9 @@ class Camera:
 
     @property
     def is_online(self) -> bool:
+        if self.last_update_time is None:
+            return False
+
         now = datetime.now().astimezone()
         diff = now - self.last_update_time
         return diff <= timedelta(hours=24)

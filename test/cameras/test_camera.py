@@ -21,3 +21,11 @@ class CameraTest(unittest.TestCase):
                         signal=100, temperature=20, battery=200, memory=100)
 
         self.assertEqual(camera.is_online, False)
+
+    def test_is_offline_when_no_last_status(self):
+        camera = Camera(id="id", name="name", model="model",
+                        modem_firmware="modem_firmware", camera_firmware="camera_firmware",
+                        last_update_time=None,
+                        signal=100, temperature=20, battery=200, memory=100)
+
+        self.assertEqual(camera.is_online, False)

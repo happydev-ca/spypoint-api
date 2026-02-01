@@ -98,11 +98,11 @@ class TestCameraApiResponse(unittest.TestCase):
                 },
                 "status": {
                     "model": "model",
-                    "lastUpdate": "2024-10-30T02:03:48.716Z",
                 }
             }
         )
 
+        self.assertEqual(camera.last_update_time, None)
         self.assertEqual(camera.signal, None)
         self.assertEqual(camera.temperature, None)
         self.assertEqual(camera.battery, None)
